@@ -1,52 +1,15 @@
-plugins {
-    id "de.undercouch.download" version "3.0.0"
-}
-
-apply plugin: 'java'
-
-import de.undercouch.gradle.tasks.download.Download
-
-group 'com.bonfig.sketch'
+group 'com.bonfig.arquillian-test'
 version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
-
-ext {
-    wildflyVersion = '10.0.0.Final'
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-}
-
-task downloadWildfly(type: Download) {
-    src "http://download.jboss.org/wildfly/$wildflyVersion/wildfly-${wildflyVersion}.tar.gz"
-    dest ".cache/wildfly-${wildflyVersion}.tar.gz"
-    onlyIfNewer true
-}
-
-task unpackWildfly(dependsOn: downloadWildfly) {
-    def wildflyTgz = downloadWildfly.dest
-    def wildflyDir = new File(buildDir, 'wildfly')
-    inputs.file wildflyTgz
-    outputs.dir wildflyDir
-    doLast {
-        copy {
-            from tarTree(resources.gzip(wildflyTgz))
-            into wildflyDir
-            eachFile { details ->
-                details.path = details.path.replaceFirst('^wildfly-[^/]*/', 'wildfly/')
-            }
-            includeEmptyDirs false
-        }
-    }
-}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.13'
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
+subprojects {
+    group 'com.bonfig.arquillian-test'
+    version '1.0-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
 }
